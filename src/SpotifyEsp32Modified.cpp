@@ -1,4 +1,4 @@
-#include "SpotifyEsp32.h"
+#include "SpotifyEsp32Modified.h"
 
 spotify_log_level_t _spotify_log_level = SPOTIFY_LOG_INFO;
 
@@ -1470,6 +1470,30 @@ bool Spotify::volume_modifyable(){
     volume_modifyable = data.reply["device"]["supports_volume"];
   }
   return volume_modifyable;
+}
+long Spotify::current_track_duration_ms(){
+  long duration_ms = -1;
+  JsonDocument filter;
+  filter["item"]["duration_ms"] = true;
+  response data = currently_playing(filter);
+  if(valid_http_code(data.status_code) && !data.reply.isNull()){
+    if (data.reply["item"].containsKey("duration_ms")) {
+      duration_ms = data.reply["item"]["duration_ms"].as<long>();
+    }
+  }
+  return duration_ms;
+}
+long Spotify::current_track_progress_ms(){
+  long progress_ms = -1;
+  JsonDocument filter;
+  filter["progress_ms"] = true;
+  response data = currently_playing(filter);
+  if(valid_http_code(data.status_code) && !data.reply.isNull()){
+    if (data.reply.containsKey("progress_ms")) {
+      progress_ms = data.reply["progress_ms"].as<long>();
+    }
+  }
+  return progress_ms;
 }
 #endif
 char Spotify::convert_id_to_uri(const char* id, const char* type){

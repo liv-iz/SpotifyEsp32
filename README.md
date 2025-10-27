@@ -1,4 +1,4 @@
-# SpotifyESP32
+# SpotifyEsp32Modified
 
 This library is a wrapper for the [Spotify Web API](https://developer.spotify.com/documentation/web-api/) designed to work with the [ESP32](https://www.espressif.com/en/products/socs/esp32/overview) microcontroller.
 

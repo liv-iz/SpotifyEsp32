@@ -1,5 +1,5 @@
-#ifndef SpotifyEsp32
-#define SpotifyEsp32
+#ifndef SpotifyEsp32Modified_h
+#define SpotifyEsp32Modified_h
 //Uncomment the following lines to disable certain features
 //#define DISABLE_PLAYER
 //#define DISABLE_ALBUM
@@ -653,6 +653,12 @@ class Spotify {
     /// @param int image array position
     /// @return Current album cover link as String
     String get_current_album_image_url(int image_size_idx);
+    /// @brief Get Current track duration in milliseconds
+    /// @return Current track duration in ms as a long, or -1 on error
+    long current_track_duration_ms();
+    /// @brief Get Current track progress in milliseconds
+    /// @return Current track progress in ms as a long, or -1 on error
+    long current_track_progress_ms();
     #endif
     /// @brief Convert ID to URI
     /// @param id ID to convert
