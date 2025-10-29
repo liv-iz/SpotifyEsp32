@@ -1495,6 +1495,52 @@ long Spotify::current_track_progress_ms(){
   }
   return progress_ms;
 }
+
+playback_info Spotify::get_current_playback() {
+  playback_info info;
+  info.http_status = -1; // Default to error state
+  info.is_playing = false;
+
+  // Make one API call to get all the data we need
+  // Apply a filter to reduce memory usage by only parsing necessary fields
+  JsonDocument filter;
+  filter["is_playing"] = true;
+  filter["progress_ms"] = true;
+  filter["item"]["id"] = true;
+  filter["item"]["name"] = true;
+  filter["item"]["duration_ms"] = true;
+  filter["item"]["artists"][0]["name"] = true; // Assuming at least one artist
+
+  response data = currently_playing(filter);
+
+  info.http_status = data.status_code;
+
+  if (valid_http_code(data.status_code) && !data.reply.isNull()) {
+    JsonDocument& doc = data.reply;
+
+    info.is_playing = doc["is_playing"].as<bool>();
+    info.progress_ms = doc["progress_ms"].as<long>();
+
+    JsonObject item = doc["item"];
+    if (!item.isNull()) {
+      info.track_id = item["id"].as<String>();
+      info.track_name = item["name"].as<String>();
+      info.duration_ms = item["duration_ms"].as<long>();
+
+      // Safely extract artist names
+      JsonArray artists = item["artists"];
+      String artist_names = "";
+      for (int i = 0; i < artists.size(); i++) {
+        artist_names += artists[i]["name"].as<String>();
+        if (i < artists.size() - 1) {
+          artist_names += ", ";
+        }
+      }
+      info.artist_name = artist_names;
+    }
+  }
+  return info;
+}
 #endif
 char Spotify::convert_id_to_uri(const char* id, const char* type){
   char uri[_size_of_uri];
