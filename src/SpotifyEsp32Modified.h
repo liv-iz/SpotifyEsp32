@@ -96,6 +96,17 @@ typedef struct{
   String error;
 } header_resp;
 
+/// @brief Simplified playback state object
+typedef struct{
+  String track_id;
+  String track_name;
+  String artist_name;
+  long duration_ms;
+  long progress_ms;
+  bool is_playing;
+  int http_status; // To check if the request was successful (200)
+} playback_info;
+
 
 /// @brief Print response object
 /// @param response_obj Response object to print
@@ -659,6 +670,9 @@ class Spotify {
     /// @brief Get Current track progress in milliseconds
     /// @return Current track progress in ms as a long, or -1 on error
     long current_track_progress_ms();
+    /// @brief Get all current playback information in a single efficient call
+    /// @return playback_info struct containing all relevant data
+    playback_info get_current_playback();
     #endif
     /// @brief Convert ID to URI
     /// @param id ID to convert
